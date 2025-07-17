@@ -26,9 +26,7 @@ def find_min_max(numbers):
     return minimum, maximum
 
 def main():
-    """
-    메인 함수: 프로그램의 핵심 로직이 실행되는 곳
-    """
+
     
     # try-except 블록: 오류가 발생할 수 있는 코드를 안전하게 실행
     try:
