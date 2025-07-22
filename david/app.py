@@ -64,46 +64,56 @@ def create_audio_from_text(text, lang):
 def home():
     """
     메인 페이지 처리 함수
-    GET: 입력 폼 표시
+    GET: 입력 폼 표시  
     POST: 음성 변환 처리
     """
     
-    # GET 요청일 때 - 입력 폼만 표시
+    # GET 요청일 때
     if request.method == 'GET':
         return render_template('index.html')
     
-    # POST 요청일 때 - 사용자 입력 처리
+    # POST 요청일 때
     if request.method == 'POST':
-        # 폼에서 데이터 가져오기
-        input_text = request.form.get('input_text', '').strip()
-        selected_lang = request.form.get('lang', DEFAULT_LANG)
-        
-        # 빈 텍스트 입력 검증
-        if not input_text:
+        try:
+            # 폼 데이터 가져오기
+            input_text = request.form.get('input_text', '').strip()
+            selected_lang = request.form.get('lang', DEFAULT_LANG)
+            
+            # 입력 검증
+            if not input_text:
+                raise ValueError("텍스트를 입력해주세요.")
+            
+            if selected_lang not in SUPPORTED_LANGUAGES:
+                raise ValueError("지원하지 않는 언어입니다.")
+            
+            # 로그 저장
+            log_user_input(input_text, selected_lang)
+            
+            # 음성 변환
+            audio_base64 = create_audio_from_text(input_text, selected_lang)
+            
+            if audio_base64 is None:
+                raise RuntimeError("음성 변환에 실패했습니다.")
+            
+            # 성공시 결과 반환
             return render_template('index.html', 
-                                 error="텍스트를 입력해주세요.")
+                                 audio=audio_base64,
+                                 success=f"'{input_text}' 음성이 생성되었습니다!")
         
-        # 언어 선택 검증 (보안을 위해 서버에서 다시 확인)
-        if selected_lang not in SUPPORTED_LANGUAGES:
+        # 사용자 입력 오류 처리
+        except ValueError as e:
+            return render_template('index.html', error=str(e))
+        
+        # 시스템 오류 처리  
+        except RuntimeError as e:
+            return render_template('index.html', error=f"{str(e)} 다시 시도해주세요.")
+        
+        # 예상하지 못한 오류 처리
+        except Exception as e:
+            print(f"예상하지 못한 오류: {e}")
             return render_template('index.html', 
-                                 error="지원하지 않는 언어입니다.")
+                                 error="시스템 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
         
-        # 사용자 입력을 로그에 저장
-        log_user_input(input_text, selected_lang)
-        
-        # 텍스트를 음성으로 변환
-        audio_base64 = create_audio_from_text(input_text, selected_lang)
-        
-        # 음성 변환 실패시 오류 메시지 표시
-        if audio_base64 is None:
-            return render_template('index.html', 
-                                 error="음성 변환에 실패했습니다. 다시 시도해주세요.")
-        
-        # 성공시 음성과 함께 페이지 반환
-        return render_template('index.html', 
-                             audio=audio_base64,
-                             success=f"'{input_text}' 음성이 생성되었습니다!")
-
 # 메인 실행 부분
 if __name__ == '__main__':
     # 0.0.0.0 주소로 80번 포트에서 서버 실행
