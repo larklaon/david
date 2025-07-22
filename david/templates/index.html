@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>음성 변환 서비스</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto 20px;
+            object-fit: cover;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .error {
+            color: red;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #ffebee;
+            border-radius: 5px;
+        }
+        .success {
+            color: green;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #e8f5e8;
+            border-radius: 5px;
+        }
+        audio {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        .download-link {
+            display: block;
+            text-align: center;
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .download-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="/static/david.jpg" alt="David" class="profile-img">
+        <h1>음성 변환 서비스</h1>
+        
+        <!-- 입력 폼 -->
+        <form method="POST">
+            <label>이름 또는 문장을 입력하세요:</label>
+            <input type="text" name="input_text" required="" placeholder="변환할 텍스트를 입력하세요">
+            
+            <label>언어 선택:</label>
+            <select name="lang">
+                <option value="ko">한국어</option>
+                <option value="en">영어</option>
+                <option value="ja">일본어</option>
+                <option value="es">스페인어</option>
+            </select>
+
+            <button type="submit">음성 듣기</button>
+        </form>
+
+        <!-- 오류 메시지 표시 -->
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <!-- 성공 메시지 표시 -->
+        {% if success %}
+            <div class="success">{{ success }}</div>
+        {% endif %}
+
+        <!-- 음성 재생 -->
+        {% if audio %}
+            <audio controls="" autoplay="">
+                <source src="data:audio/mpeg;base64,{{ audio }}" type="audio/mpeg">
+                브라우저가 오디오를 지원하지 않습니다.
+            </audio>
+            <a href="data:audio/mpeg;base64,{{ audio }}" download="voice.mp3" class="download-link">
+                MP3 파일로 저장하기
+            </a>
+        {% endif %}
+    </div>
+</body>
+</html>
