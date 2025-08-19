@@ -1,4 +1,4 @@
-# Flask 웹 프레임워크와 필요한 모듈들을 가져옵니다
+# Flask 웹 프레임워크와 필요한 모듈들을 가져옵니다.
 from flask import Flask, request, Response, render_template
 import os
 from io import BytesIO
