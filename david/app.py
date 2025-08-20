@@ -45,10 +45,7 @@ def create_audio_from_text(text, lang):
         # gTTS로 음성 생성하고 메모리에 저장
         tts = gTTS(text=text, lang=lang, slow=False)
         tts.write_to_fp(fp)
-        
-        # 파일 포인터를 처음으로 이동
-        fp.seek(0)
-        
+
         # 바이트 데이터를 base64로 인코딩
         audio_data = fp.getvalue()
         audio_base64 = base64.b64encode(audio_data).decode('utf-8')
@@ -113,7 +110,11 @@ def home():
             print(f"예상하지 못한 오류: {e}")
             return render_template('index.html', 
                                  error="시스템 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
-        
+
+@app.route('/menu')
+def menu():
+    return render_template('menu.html')
+
 # 메인 실행 부분
 if __name__ == '__main__':
     # 0.0.0.0 주소로 80번 포트에서 서버 실행
