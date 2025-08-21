@@ -1,6 +1,7 @@
 # Flask 웹 프레임워크와 필요한 모듈들을 가져옵니다.
 from flask import Flask, request, Response, render_template
 import os
+import socket  # 추가된 import
 from io import BytesIO
 from gtts import gTTS
 import base64
@@ -65,9 +66,15 @@ def home():
     POST: 음성 변환 처리
     """
     
+    # 호스트네임 설정 (render_template 호출 이전에 추가)
+    if app.debug:
+        hostname = '컴퓨터(인스턴스) : ' + socket.gethostname()
+    else:
+        hostname = ' '
+    
     # GET 요청일 때
     if request.method == 'GET':
-        return render_template('index.html')
+        return render_template('index.html', computername=hostname)
     
     # POST 요청일 때
     if request.method == 'POST':
@@ -92,23 +99,25 @@ def home():
             if audio_base64 is None:
                 raise RuntimeError("음성 변환에 실패했습니다.")
             
-            # 성공시 결과 반환
+            # 성공시 결과 반환 (computername 추가)
             return render_template('index.html', 
+                                 computername=hostname,
                                  audio=audio_base64,
                                  success=f"'{input_text}' 음성이 생성되었습니다!")
         
         # 사용자 입력 오류 처리
         except ValueError as e:
-            return render_template('index.html', error=str(e))
+            return render_template('index.html', computername=hostname, error=str(e))
         
         # 시스템 오류 처리  
         except RuntimeError as e:
-            return render_template('index.html', error=f"{str(e)} 다시 시도해주세요.")
+            return render_template('index.html', computername=hostname, error=f"{str(e)} 다시 시도해주세요.")
         
         # 예상하지 못한 오류 처리
         except Exception as e:
             print(f"예상하지 못한 오류: {e}")
             return render_template('index.html', 
+                                 computername=hostname,
                                  error="시스템 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
 
 @app.route('/menu')
@@ -117,6 +126,5 @@ def menu():
 
 # 메인 실행 부분
 if __name__ == '__main__':
-    # 0.0.0.0 주소로 80번 포트에서 서버 실행
-    # debug=True는 개발 환경에서만 사용 (코드 수정시 자동 재시작)
+    # debug=True 설정 (이미 설정되어 있음)
     app.run('0.0.0.0', 80, debug=True)
