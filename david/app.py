@@ -124,6 +124,10 @@ def home():
 def menu():
     return render_template('menu.html')
 
+@app.route("/test2")
+def test2():
+    return render_template('test2.html')
+
 # 메인 실행 부분
 if __name__ == '__main__':
     # debug=True 설정
