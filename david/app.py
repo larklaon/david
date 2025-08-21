@@ -126,5 +126,5 @@ def menu():
 
 # 메인 실행 부분
 if __name__ == '__main__':
-    # debug=True 설정 (이미 설정되어 있음)
+    # debug=True 설정
     app.run('0.0.0.0', 80, debug=True)
