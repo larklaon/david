@@ -1,1 +1,12 @@
-# problem-1-3, problem-1-4, problem-1-7, problem-1-8, 
+## 반달곰 커피 홈페이지
+
+참조링크: https://반달곰 커피
+
+문구: 오디오 출력 소스코드
+
+lang = request.args.get('lang', DEFAULT_LANG)
+fp = BytesIO()
+gTTS(text, "com", lang).write_to_fp(fp)
+encoded_audio_data = base64.b64encode(fp.getvalue())
+
+<img width="583" height="315" alt="image" src="https://github.com/user-attachments/assets/4f394d78-0cdd-4866-94f1-78cc0357ba04" />
